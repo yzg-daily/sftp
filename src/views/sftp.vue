@@ -144,9 +144,8 @@ const mainMenu = {
   channel: 'sftp:right:menu',
 }
 function handleRightClick () {
-  event.preventDefault();
-  console.log('handleRightClick');
-  window.ipcRenderer.send('right:click', mainMenu)
+  // console.log('handleRightClick');
+  // window.ipcRenderer.send('right:click', mainMenu)
 }
 
 
