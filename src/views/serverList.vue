@@ -12,14 +12,7 @@ interface List {
   port?: string
 }
 
-const keyName = {
-  "title": "名称",
-  "name": "用户名",
-  "location": "IP",
-  "port": "端口",
-  "password": "密码",
-  "catalogue": "部署目录",
-}
+
 const list = ref<List[]>([])
 async function readyFile() {
   const data = await window.ipcRenderer.invoke('ready-file', "/serverJson/server1.json");
@@ -28,6 +21,14 @@ async function readyFile() {
 
 readyFile();
 
+const keyName = {
+  "title": "名称",
+  "name": "用户名",
+  "location": "IP",
+  "port": "端口",
+  "password": "密码",
+  "catalogue": "部署目录",
+}
 function getText(obj: any) {
   return Object.entries(keyName).reduce((cur, pre) => {
     const [key, value]: [any, string] = pre;
@@ -35,7 +36,6 @@ function getText(obj: any) {
     return cur;
   }, '')
 }
-
 async function down(el: List) {
   const text = getText(el);
   const options = {
