@@ -3,13 +3,14 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "YourAppID",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "qy-toolbar",
   "directories": {
     "output": "release/${version}"
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "src/assets"
   ],
   "mac": {
     "target": [
@@ -18,6 +19,7 @@
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "win": {
+    "icon": "src/assets/tray/qy@4x.png",
     "target": [
       {
         "target": "nsis",
@@ -29,6 +31,9 @@
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
   },
   "nsis": {
+    "installerIcon": 'public/favicon.ico',
+    "uninstallerIcon": 'public/favicon.ico',
+    "installerHeaderIcon": 'public/favicon.ico',
     "oneClick": false,
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,

@@ -1,5 +1,5 @@
 /// <reference types="vite-plugin-electron/electron-env" />
-
+import type {BrowserWindowConstructorOptions, Event} from 'electron'
 declare namespace NodeJS {
   interface ProcessEnv {
     VSCODE_DEBUG?: 'true'
@@ -20,4 +20,13 @@ declare namespace NodeJS {
     /** /dist/ or /public/ */
     VITE_PUBLIC: string
   }
+  interface Option {
+    title?: string;
+    width?: string;
+    height?: string;
+    frame?: string;
+    url: string;
+  }
+  export type NewOption = BrowserWindowConstructorOptions & Option;
 }
+export type ElectronEvent = typeof Event;

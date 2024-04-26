@@ -11,9 +11,25 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": [
+      "node",
+      "vite/client",
+      "element-plus/global",
+      "electron/electron.d.ts"
+    ],
+    "paths": {
+      "electron": ["./node_modules/electron"],
+      "@": ["./src"]
+    }
   },
-  "include": ["src"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/*d.ts",
+    "electron/electron-env.d.ts"
+  ],
   "references": [
     { "path": "./tsconfig.node.json" }
   ]

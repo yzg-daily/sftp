@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
+import path from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -36,7 +37,7 @@ export default defineConfig(({ command }) => {
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
-                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
+                // external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
               },
             },
           },
@@ -62,6 +63,13 @@ export default defineConfig(({ command }) => {
         renderer: {},
       }),
     ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+        '@c': path.resolve(__dirname, 'src/components'),
+        '@v': path.resolve(__dirname, 'src/views'),
+      }
+    },
     server: process.env.VSCODE_DEBUG && (() => {
       const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
       return {
