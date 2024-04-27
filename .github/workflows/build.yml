@@ -48,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./path/to/your/app.zip  # 替换为实际的构建文件路径
-          asset_name: app.zip
-          asset_content_type: application/zip
+          asset_path: ./release/${{ github.ref }}/
+          asset_name: qy-toolbar.exe
+          asset_content_type: application/qy-toolbar.exe
