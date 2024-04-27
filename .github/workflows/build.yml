@@ -40,15 +40,3 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-
-        with:
-          github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/${{ github.ref }}/
-          asset_name: qy-toolbar.exe
-          asset_content_type: application/qy-toolbar.exe
