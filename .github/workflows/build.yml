@@ -41,10 +41,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
         uses: actions/create-release@v1
-
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -53,8 +50,6 @@ jobs:
 
       - name: Upload Release Asset
         id: upload-release-asset
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
