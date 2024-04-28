@@ -16,12 +16,6 @@ jobs:
         os: [macos-latest]  # 定义平台
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Echo GitHub Token
-        run: echo ${{ secrets.GH_TOKEN }}
-        shell: bash
-
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,18 +30,6 @@ jobs:
 
       - name: Build Electron app
         run: npm run build  # 使用 Electron Builder 或其他工具进行打包
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-
 #      - name: Upload Release Asset
 #        id: upload-release-asset
 #        uses: actions/upload-release-asset@v1
