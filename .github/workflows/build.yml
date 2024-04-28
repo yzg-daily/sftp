@@ -41,8 +41,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GH_TOKEN: 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
-          GITHUB_TOKEN: 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
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
         with:
           tag_name: ${{ github.ref }}
