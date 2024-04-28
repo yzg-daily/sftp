@@ -1,43 +1,60 @@
-name: Build and Release Electron App
+
+name: Build/release
 
 on:
   push:
-    branches:
-      - main  # 触发分支
-    tags:
-      - 'v*'  # 触发标签，以 "v" 开头的版本号
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "**.spec.js"
+      - ".idea"
+      - ".vscode"
+      - ".dockerignore"
+      - "Dockerfile"
+      - ".gitignore"
+      - ".github/**"
+      - "!.github/workflows/build.yml"
+
 
 jobs:
   build-and-release:
-    runs-on: ${{ matrix.os }}  # 使用 macOS 和 Windows 平台
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-latest]  # 定义平台
+        os: [macos-latest,windows-latest]
 
     steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
+
+      - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # 选择适当的 Node.js 版本
+          node-version: 18
 
-      - name: Install dependencies
-        run: npm install  # 安装项目依赖
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Build Electron app
-        run: npm run build  # 使用 Electron Builder 或其他工具进行打包
-#      - name: Upload Release Asset
-#        id: upload-release-asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./release/${{ github.ref }}/
-#          asset_name: qy-toolbar.exe
-#          asset_content_type: application/qy-toolbar.exe
+      - name: Build Release Files
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+      - name: Macro Electron Builder Action
+        uses: coparse-inc/action-electron-builder@v1.0.0
+        with:
+          name: release_on_${{ matrix. os }}
+          path: release/
+          retention-days: 5
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
