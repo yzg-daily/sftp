@@ -49,9 +49,9 @@
     {
       "provider": "github",
       "releaseType": "release",
-      "owner": "yzg-daily",
-      "repo": "sftp",
-      "token": "${{ secrets.GITHUB_TOKEN }}",
+//      "owner": "yzg-daily",
+//      "repo": "sftp",
+//      "token": "${{ secrets.GITHUB_TOKEN }}",
       "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}",
       "GITHUB_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
     }
