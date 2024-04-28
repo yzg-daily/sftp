@@ -13,14 +13,14 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]  # 定义平台
+        os: [macos-latest]  # 定义平台
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Echo GitHub Token
         run: echo ${{ secrets.GH_TOKEN }}
-        shell: cmd
+        shell: bash
 
 
       - name: Checkout code
