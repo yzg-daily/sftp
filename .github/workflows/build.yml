@@ -37,23 +37,24 @@ jobs:
       - name: Build Electron app
         run: npm run build  # 使用 Electron Builder 或其他工具进行打包
 
-      - name: Echo GitHub Token
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
+
 
       - name: Create Release
         id: create_release
+        run: echo ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         uses: actions/create-release@v1
+
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
 
-      - name: Echo GitHub Token
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
+
 
       - name: Upload Release Asset
         id: upload-release-asset
+        run: echo ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}

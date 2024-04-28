@@ -5,7 +5,6 @@
   "description": "Really simple Electron + Vue + Vite boilerplate.",
   "author": "qy",
   "license": "MIT",
-  "private": true,
   "keywords": [
     "electron",
     "rollup",
