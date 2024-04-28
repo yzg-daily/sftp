@@ -48,8 +48,7 @@
   "publish": [
     {
       "provider": "github",
-      "releaseType": "release",
-      GH_TOKEN: "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"
+      "releaseType": "release"
     }
   ]
 }
