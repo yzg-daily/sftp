@@ -20,6 +20,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Echo GitHub Token
         run: echo ${{ secrets.GH_TOKEN }}
+        shell: cmd
+
 
       - name: Checkout code
         uses: actions/checkout@v2
