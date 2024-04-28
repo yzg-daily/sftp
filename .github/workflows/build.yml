@@ -1,72 +1,60 @@
-
-name: Build/release
+name: Build and Release Electron App
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "**.spec.js"
-      - ".idea"
-      - ".vscode"
-      - ".dockerignore"
-      - "Dockerfile"
-      - ".gitignore"
-      - ".github/**"
-      - "!.github/workflows/build.yml"
-
+    branches:
+      - main  # 触发分支
+    tags:
+      - 'v*'  # 触发标签，以 "v" 开头的版本号
 
 jobs:
   build-and-release:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}  # 使用 macOS 和 Windows 平台
 
     strategy:
       matrix:
-        os: [macos-latest,windows-latest]
+        os: [macos-latest]  # 定义平台
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Echo GitHub Token
+        run: echo ${{ secrets.GH_TOKEN }}
+        shell: bash
 
-      - name: Check out Git repository
-        uses: actions/checkout@v3
 
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20 # 选择适当的 Node.js 版本
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm install  # 安装项目依赖
 
-      - name: Build Release Files
-        run: npm run build
+      - name: Build Electron app
+        run: npm run build  # 使用 Electron Builder 或其他工具进行打包
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
         with:
-          name: release_on_${{ matrix. os }}
-          path: release/
-          retention-days: 5
-           # GitHub token, automatically provided to the action
-           # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-
-      - name: Macro Electron Builder Action
-        uses: coparse-inc/action-electron-builder@v1.0.0
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          name: release_on_${{ matrix. os }}
-          path: release/
-          retention-days: 5
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/${{ github.ref }}/
+          asset_name:  ${{ matrix.os }}
