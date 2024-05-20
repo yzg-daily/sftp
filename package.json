@@ -1,6 +1,6 @@
 {
-  "name": "toolbar",
-  "version": "1.0.2",
+  "name": "ftptool",
+  "version": "0.0.1",
   "main": "dist-electron/main/index.js",
   "description": "Really simple Electron + Vue + Vite boilerplate.",
   "author": "qy",
@@ -46,5 +46,8 @@
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue-tsc": "^2.0.6"
+  },
+  "dependencies": {
+    "electron-log": "^5.1.4"
   }
 }

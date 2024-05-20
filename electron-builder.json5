@@ -1,9 +1,9 @@
 // @see https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "com.electron.ftptool",
   "asar": true,
-  "productName": "qy-toolbar",
+  "productName": "ftpTool",
   "directories": {
     "output": "release/${version}"
   },
@@ -19,7 +19,7 @@
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },
   "win": {
-    "icon": "src/assets/tray/qy@4x.png",
+    "icon": "public/icon/512x512.png",
     "target": [
       {
         "target": "nsis",

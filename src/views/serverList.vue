@@ -38,7 +38,7 @@ function getText(obj: any) {
 }
 async function down(el: List) {
   const text = getText(el);
-  const options = {
+  const   options = {
     title: 'Save File',
     defaultPath: '服务器信息.txt',
     filters: [{name: 'Text Files', extensions: ['txt']}],

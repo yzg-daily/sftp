@@ -1,12 +1,23 @@
 import { app, BrowserWindow, shell, ipcMain, Menu, clipboard, dialog, screen } from 'electron'
 import { createRequire } from 'node:module'
-
+import log from 'electron-log'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 
 import {readyFile, saveFile} from "../file";
 import {createTray} from '../tray'
+
+process.on('uncaughtException', (error, origin) => {
+  log.error('An uncaught exception occurred:', error);
+  log.error('Origin:', origin);
+  // 在这里可以添加其他错误处理逻辑，比如发送崩溃报告等
+});
+process.on('unhandledRejection', (reason, promise) => {
+  log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // 在这里可以添加其他错误处理逻辑
+});
+
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -73,7 +84,7 @@ async function createWindow() {
   if (VITE_DEV_SERVER_URL) { // #298
     await win.loadURL(VITE_DEV_SERVER_URL)
     // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
   } else {
     await win.loadFile(indexHtml)
   }
@@ -89,8 +100,7 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-
-  win.setIgnoreMouseEvents(false);
+  win.setIgnoreMouseEvents(true, { forward: true });
   ipcMain.on('card:mouseenter', () => {
     win.setIgnoreMouseEvents(false);
   });
@@ -102,6 +112,8 @@ async function createWindow() {
 }
 
 app.whenReady().then(() => {
+  log.info('app ready')
+  log.transports.file.file = `${app.getPath('userData')}/logs/app.log`;
   createWindow();
   Menu.setApplicationMenu(null)
 })
@@ -145,7 +157,6 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: argRouterPath })
   }
 })
-
 ipcMain.handle('ready-file', async (event, readyFilePath) => {
   return readyFile(path.join(process.env.VITE_PUBLIC, readyFilePath))
 })
@@ -169,7 +180,6 @@ ipcMain.handle('dialog:save-file', async (event, options, text) => {
     return false;
   }
 })
-
 ipcMain.on('right:click', (event, option) => {
   const {menu, channel = 'right:click:cb'} = option;
   menu.forEach((el) => {
