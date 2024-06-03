@@ -84,7 +84,7 @@ async function createWindow() {
   if (VITE_DEV_SERVER_URL) { // #298
     await win.loadURL(VITE_DEV_SERVER_URL)
     // Open devTool if the app is not packaged
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
   } else {
     await win.loadFile(indexHtml)
   }
@@ -100,7 +100,7 @@ async function createWindow() {
     return { action: 'deny' }
   })
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-  win.setIgnoreMouseEvents(true, { forward: true });
+  // win.setIgnoreMouseEvents(true, { forward: true });
   ipcMain.on('card:mouseenter', () => {
     win.setIgnoreMouseEvents(false);
   });

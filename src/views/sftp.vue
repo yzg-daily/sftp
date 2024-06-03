@@ -7,7 +7,8 @@ import type {IpcRendererEvent} from 'electron'
 
 interface Item {
   title?: string;
-  name?: string;
+  derive?: string;
+  username: string;
   password: string;
   location: string;
   catalogue?: string;
@@ -37,9 +38,9 @@ interface ContextMenu {
  * returned sftp://root@location:port
  * returned sftp://root:password;fingerprint=xxx@location:port // 这是 ftp 生成的url 用户+密码+密钥+ip+端口 （密钥应该直接能对应目录）
  * */
-function filterText(el: Item) {
+function filterText(el: Item, force = false) {
   const {sftp, username, password, location, port, catalogue} = el;
-  if (sftp) return sftp;
+  if (sftp && !force) return sftp;
   let str = `sftp://${username}:${password}@${location}:${port}`
   if (catalogue) {
     str += `${catalogue}`
@@ -90,10 +91,18 @@ const formValues: Item = reactive({
   sftp: ''
 })
 
+function handleBlur (event: any) {
+  const val = event.target.value;
+  if (!val) return;
+  if (val) {
+    formValues.sftp = filterText(formValues, true)
+  }
+}
+
 
 const keyName = {
   "title": "名称",
-  "name": "用户名",
+  "username": "用户名",
   "location": "IP",
   "port": "端口",
   "password": "密码",
@@ -179,6 +188,7 @@ window.ipcRenderer.on(contextMenu.channel, (event: IpcRendererEvent, code: strin
     case 'sftp:edit':
     case 'sftp:copy':
       Object.keys(formValues).forEach(el => {
+        console.log(`${el}: ${record?.[el]}`)
         formValues[el] = record?.[el]
       })
       visible.value = true;
@@ -282,7 +292,7 @@ function handleAdd() {
               <el-input placeholder="用户" v-model="formValues.username"></el-input>
             </el-form-item>
             <el-form-item class="s-item">
-              <el-input placeholder="密码" v-model="formValues.password"></el-input>
+              <el-input placeholder="密码" v-model="formValues.password" @blur="handleBlur"></el-input>
             </el-form-item>
             <el-form-item class="s-item">
               <el-input placeholder="IP" v-model="formValues.location"></el-input>
