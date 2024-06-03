@@ -99,7 +99,7 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
   })
-  // win.webContents.on('will-navigate', (event, url) => { }) #344
+  win.webContents.on('will-navigate', (event, url) => { }) #344
   // win.setIgnoreMouseEvents(true, { forward: true });
   ipcMain.on('card:mouseenter', () => {
     win.setIgnoreMouseEvents(false);
