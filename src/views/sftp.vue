@@ -30,6 +30,13 @@ interface ContextMenu {
   type: string | undefined;
 }
 
+function encodeIfContainsAtSymbol(str) {
+  if (str.includes('@')) {
+    return encodeURIComponent(str);
+  } else {
+    return str;
+  }
+}
 
 /**
  *
@@ -41,7 +48,7 @@ interface ContextMenu {
 function filterText(el: Item, force = false) {
   const {sftp, username, password, location, port, catalogue} = el;
   if (sftp && !force) return sftp;
-  let str = `sftp://${username}:${password}@${location}:${port}`
+  let str = `sftp://${username}:${encodeIfContainsAtSymbol(password)}@${location}:${port}`
   if (catalogue) {
     str += `${catalogue}`
   }
