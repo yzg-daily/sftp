@@ -30,7 +30,7 @@ interface ContextMenu {
   type: string | undefined;
 }
 
-function encodeIfContainsAtSymbol(str) {
+function encodeIfContainsAtSymbol(str: string) {
   if (str.includes('@')) {
     return encodeURIComponent(str);
   } else {
