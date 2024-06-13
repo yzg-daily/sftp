@@ -8,6 +8,12 @@ import os from 'node:os'
 import {readyFile, saveFile} from "../file";
 import {createTray} from '../tray'
 
+
+app.setLoginItemSettings({
+  openAtLogin: true
+});
+
+
 process.on('uncaughtException', (error, origin) => {
   log.error('An uncaught exception occurred:', error);
   log.error('Origin:', origin);
@@ -99,8 +105,8 @@ async function createWindow() {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
   })
-  win.webContents.on('will-navigate', (event, url) => { }) #344
-  // win.setIgnoreMouseEvents(true, { forward: true });
+  // win.webContents.on('will-navigate', (event, url) => { }) #344
+  win.setIgnoreMouseEvents(true, { forward: true });
   ipcMain.on('card:mouseenter', () => {
     win.setIgnoreMouseEvents(false);
   });
