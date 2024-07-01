@@ -63,14 +63,24 @@ interface FileData {
   server: any[]
 }
 
-async function getFile() {
-  const [fileData, loading]: [Ref<FileData | undefined>, Ref<boolean>] = await useGetFile("/serverJson/server.json");
-  if (loading.value) return false;
-  list.value = fileData.value?.server || [];
-}
+// async function getFile() {
+//   const [fileData, loading]: [Ref<FileData | undefined>, Ref<boolean>] = await useGetFile("/serverJson/server.json");
+//   if (loading.value) return false;
+//   list.value = fileData.value?.server || [];
+// }
+//
+// getFile();
 
+async function getFile() {
+ list.value = await window.ipcRenderer.invoke('store:get', 'ftp', []);
+}
 getFile();
 
+async function saveFile (content: any) {
+  console.log(content, 'saveFile');
+  const res = await window.ipcRenderer.invoke('store:set', 'ftp', content);
+  console.log(res);
+}
 
 const show = ref(false);
 
@@ -195,21 +205,21 @@ window.ipcRenderer.on(contextMenu.channel, (event: IpcRendererEvent, code: strin
     case 'sftp:edit':
     case 'sftp:copy':
       Object.keys(formValues).forEach(el => {
-        console.log(`${el}: ${record?.[el]}`)
         formValues[el] = record?.[el]
       })
       visible.value = true;
       break;
     case 'sftp:delete':
       list.value?.splice(record.index as number, 1);
-      window.ipcRenderer.invoke(
-          'save-file',
-          '/serverJson/server.json',
-          JSON.stringify({server: toRaw(list.value)}),
-          {
-            flow: 'w'
-          }
-      );
+      saveFile(toRaw(list.value))
+      // window.ipcRenderer.invoke(
+      //     'save-file',
+      //     '/serverJson/server.json',
+      //     JSON.stringify({server: toRaw(list.value)}),
+      //     {
+      //       flow: 'w'
+      //     }
+      // );
       visible.value = false;
       break;
   }
@@ -236,14 +246,16 @@ function handleAdd() {
         ...formValues
       })
     }
-    window.ipcRenderer.invoke(
-        'save-file',
-        '/serverJson/server.json',
-        JSON.stringify({server: toRaw(list.value)}),
-        {
-          flow: 'w'
-        }
-    );
+    console.log(list.value);
+    saveFile(toRaw(list.value))
+    // window.ipcRenderer.invoke(
+    //     'save-file',
+    //     '/serverJson/server.json',
+    //     JSON.stringify({server: toRaw(list.value)}),
+    //     {
+    //       flow: 'w'
+    //     }
+    // );
     visible.value = false;
   })
 }

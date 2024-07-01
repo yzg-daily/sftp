@@ -1,4 +1,5 @@
 import { app, BrowserWindow, shell, ipcMain, Menu, clipboard, dialog, screen } from 'electron'
+import Store from 'electron-store'
 import { createRequire } from 'node:module'
 import log from 'electron-log'
 import { fileURLToPath } from 'node:url'
@@ -8,6 +9,7 @@ import os from 'node:os'
 import {readyFile, saveFile} from "../file";
 import {createTray} from '../tray'
 
+const mainStore = new Store();
 
 app.setLoginItemSettings({
   openAtLogin: true
@@ -119,7 +121,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
   log.info('app ready')
-  log.transports.file.file = `${app.getPath('userData')}/logs/app.log`;
+  log.transports.file['file'] = `${app.getPath('userData')}/logs/app.log`;
   createWindow();
   Menu.setApplicationMenu(null)
 })
@@ -169,6 +171,33 @@ ipcMain.handle('ready-file', async (event, readyFilePath) => {
 ipcMain.handle('save-file', async (event, saveFilePath, fileContent, option) => {
   return saveFile(path.join(process.env.VITE_PUBLIC, saveFilePath), fileContent, option)
 })
+// mainStore 读取数据
+ipcMain.handle('store:get', (event, key, initData = undefined) => {
+  if (!key) return mainStore.store;
+  return mainStore.get(key) ?? initData;
+})
+// mainStore 存储数据, 根据key操作: 1 覆盖原来的， 2 追加 3 修改某条数据
+ipcMain.handle('store:set', (event, key, value, type) => {
+  // if ()
+  console.log(value, 'store:set');
+  /**
+   *  type
+   * 'r' - 读取模式：打开文件进行读取。如果文件不存在，则新建。
+   * 'w' - 写入模式：打开文件进行写入。如果文件已存在，其内容将被覆盖；如果文件不存在，则创建新文件。
+   * 'a' - 追加模式：打开文件并在文件末尾追加内容。如果文件不存在，则创建新文件。
+   * 'r+' - 读写模式：打开文件进行读写。文件必须存在。
+   * 'w+' - 读写模式（覆盖）：打开文件进行读写。如果文件已存在，内容将被覆盖；如果文件不存在，则创建新文件。
+   * 'a+' - 读写模式（追加）：打开文件进行读写。文件的原有内容会被保留，写操作将在文件末尾追加内容。如果文件不存在，则创建新文件
+   * */
+  switch (type) {
+    case 'a':
+      const oldStore =  (mainStore.get(key) ?? {}) as object
+      return mainStore.set(key, {...oldStore, ...value});
+    default:
+      return mainStore.set(key, value);
+  }
+})
+
 ipcMain.on('copy-to-clipboard', (event, text) => {
   console.log('copy-to-clipboard', text);
   clipboard.writeHTML(text);
